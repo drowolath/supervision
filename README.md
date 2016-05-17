@@ -8,6 +8,7 @@ Focus is put on the simplicity of use and pure REST API.
 
 ## What's needed?
 
+* RabbitMQ 3.3
 * python2.7
 * celery 3.1
 * Flask 0.10
