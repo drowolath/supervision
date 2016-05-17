@@ -14,9 +14,8 @@ from celery import chain, group, subtask
 from ConfigParser import ConfigParser
 from supervision.lib import Camera, Snapshot
 from supervision.celery import gpsparser, cameras
+from supervision import CONFIG
 
-CONFIG = ConfigParser(allow_no_value=True)
-CONFIG.read('/etc/supervisor/supervisor.ini')
 
 @cameras.task(name='supervision.tasks.get_image')
 def get_image(camera_name, **kwargs):
