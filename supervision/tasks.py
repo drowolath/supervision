@@ -12,7 +12,7 @@ import os
 import records
 from celery import chain, group, subtask
 from ConfigParser import ConfigParser
-from supervision.lib import Camera, Snapshot
+from supervision.lib import Camera, Snapshot, GPSTrack
 from supervision.celery import gpsparser, cameras
 from supervision import CONFIG
 
@@ -84,3 +84,59 @@ def purge(cameras):
     for camera in cameras:
         purge_folder.delay(camera['name'])
     return True
+
+@gpsparser.task(name='supervision.tasks.dmap')
+def dmap(sequence, callback):
+    """task mapping and grouping"""
+    callback = subtask(callback)
+    return group(callback.clone([arg,]) for arg in sequence)()
+
+@gpsparser.task(name='supervision.tasks.parse')
+def parse(datagram):
+    """parsing a datagram"""
+    track = GPSTrack(datagram)
+    return track
+
+@gpsparser.task(name='supervision.tasks.store')
+def store(data, dbname):
+    u"""infos = (unit_id, timestamp, lon, lat, angle, sats, speed)"""
+    dburl = '{engine}://{user}:{pwd}@{host}/{dbname}'.format(
+        engine=CONFIG.get(dbname, 'engine'),
+        user=CONFIG.get(dbname, 'username'),
+        pwd=CONFIG.get(dbname, 'password'),
+        dbname=CONFIG.get(dbname, 'dbname')
+        )
+    db = records.Database(dburl)
+    result = db.query(
+        "select id from tracking_device where unit_id=:unit_id",
+        unit_id=data.unit_id
+        )
+    device = result.all()
+    if device: # at this point we rely on the unicity of unit_id
+        sql = """
+              inser into tracking_position
+              (unit_id, datetime, longitude, latitude, angle, speed)
+              VALUES (:unit_id,
+                      :datetime,
+                      :longitude,
+                      :latitude,
+                      :angle,
+                      :speed)
+              """
+        result = db.query(
+            sql,
+            unit_id=data.unit_it,
+            datetime=data.datetime,
+            longitude=data.longitude,
+            latitude=data.latitude,
+            angle=data.angle,
+            speed=data.speed
+            )
+
+@gpsparser.task(name='supervision.tasks.parse_and_store')
+def parse_and_store(datagram):
+    """parse the datagram and store it"""
+    chain(
+        parse.s(datagram),
+        dmap.s(store.s())
+        )()
