@@ -17,10 +17,6 @@ from supervision.celery import gpsparser, cameras
 
 CONFIG = ConfigParser(allow_no_value=True)
 CONFIG.read('/etc/supervisor/supervisor.ini')
-if CONFIG.has_section('plugins'):
-    PLUGINS = {}
-    for package in CONFIG.options('plugins'):
-        PLUGINS[package] = importlib.import_module(package)
 
 @cameras.task(name='supervision.tasks.get_image')
 def get_image(camera_name, **kwargs):
