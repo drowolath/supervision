@@ -28,7 +28,7 @@ gpsparser.conf.update(
     CELERY_TIMEZONE = 'Indian/Antananarivo',
     CELERY_ENABLE_UTC = True,
     CELERY_ROUTES = {
-        'supervision.tasks.dispatch': {'queue': 'dispatch'},
+        'supervision.tasks.parse_and_store': {'queue': 'parse_and_store'},
         'supervision.tasks.parse': {'queue': 'parse'},
         'supervision.tasks.store': {'queue': 'record'},
         'supervision.tasks.dmap': {'queue': 'record'},
