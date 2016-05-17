@@ -7,6 +7,7 @@ supervision is expecting sections grouping informations regarding:
 
 * cameras from which it'll grab snapshots
 * databases in which it'll store gps tracks
+* plugins from which it'll get custom code
 
 Informations needed
 -------------------
@@ -38,6 +39,25 @@ It only awaits for sections named database_x and will look for the following man
 * username: username to access the database, if needed
     
 
+Plugins
+*******
+
+One mandatory plugin for supervisor is the code for parsing GPS tracks.
+It will look for a section named 'plugins' in the configuration file.
+Under this section, it will look for a mandatory option:
+
+* folder: the folder in which you have stored your :file:`supervision_plugins/` directory
+* .py file name: no value assigned to this option; its only name is enough
+
+Example:
+
+.. code-block:: bash
+
+   [plugins]
+   folder=/path/to/location
+   gpsparser
+
+   
 Configuration commands
 ----------------------
 
