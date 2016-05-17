@@ -27,7 +27,11 @@ setup(
     url='http://github.com/drowolath/supervision.git',
 )
 
-os.mkdir('/etc/supervision')
-config = ConfigParser()
-with open('/etc/supervision/supervision.ini', 'w') as f:
-    config.write(f)
+try:
+    os.mkdir('/etc/supervision')
+except OSError:
+    pass
+finally:
+    config = ConfigParser(allow_no_value=True)
+    with open('/etc/supervision/supervision.ini', 'w') as f:
+        config.write(f)

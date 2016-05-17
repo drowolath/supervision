@@ -13,5 +13,5 @@ CAMERA_OPTIONS = [
     'snapshots_folder'
     ]
 
-DATABASE_OPTIONS = ['host', 'user', 'password', 'dbname']
+DATABASE_OPTIONS = ['host', 'user', 'password', 'engine', 'dbname']
     
