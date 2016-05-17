@@ -12,9 +12,9 @@ import os
 import records
 from celery import chain, group, subtask
 from ConfigParser import ConfigParser
-from supervision.lib import Camera, Snapshot, GPSTrack
+from supervision.lib import Camera, Snapshot
 from supervision.celery import gpsparser, cameras
-from supervision import CONFIG
+from supervision import CONFIG, PLUGINS
 
 
 @cameras.task(name='supervision.tasks.get_image')
@@ -94,8 +94,12 @@ def dmap(sequence, callback):
 @gpsparser.task(name='supervision.tasks.parse')
 def parse(datagram):
     """parsing a datagram"""
-    track = GPSTrack(datagram)
-    return track
+    module = filter(lambda x: x.__name__ == 'gpsparser', PLUGINS)
+    if module:
+        GPSTrack = module[0]
+        track = GPSTrack(datagram)
+        return track
+    raise ImportError("Cannot import any module named gpsparser")
 
 @gpsparser.task(name='supervision.tasks.store')
 def store(data, dbname):

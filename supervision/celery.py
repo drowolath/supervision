@@ -13,6 +13,11 @@ from datetime import timedelta
 from supervision import CAMERAS
 
 
+__all__ = [
+    'gpsparser',
+    'cameras'
+    ]
+
 gpsparser = Celery(
     'supervision',
     broker='amqp://',

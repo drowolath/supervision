@@ -14,6 +14,10 @@ from PIL import Image
 from StringIO import StringIO
 from supervision import CONFIG, CAMERAS
 
+__all__ = [
+    'Camera',
+    'Snapshot'
+    ]
 
 class Camera(object):
     """represents an IP Camera"""
