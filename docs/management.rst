@@ -3,11 +3,7 @@
 Managing supervision
 ====================
 
-supervision proposes Celery apps to manage periodic and repetitive tasks.
-For now, it has two apps:
-
-* gpsparser: a GPS tracks parser; you may plug a custom one in configuration
-* cameras: a crawler that will periodically fetch snapshots from cameras configured
+supervision proposes a Celery app to manage periodic and repetitive tasks: a crawler that will periodically fetch snapshots from cameras configured
 
 Launching celery apps
 ---------------------
@@ -18,7 +14,6 @@ If you've ever used Celery, it's really straightforward:
 
 .. code-block:: bash
 
-   $ celery worker -n gpsparser@locahlost -A supervision.gpsparser -Q dispatch,parse,record
    $ celery worker -n cameras@localhost -A supervision.cameras --beat --schedule /var/lib/celery/ipcam_beat.db -Q download,purge
 
 The "-Q" option in Celery gives precision on which Queue to implement.

@@ -3,10 +3,9 @@
 supervision
 ===========
 
-Have you ever considered pluging in one project all of your personal tracking data?
-May it be cameras at home or the backhauling of GPS data, having them managed by one tiny app?
+Have you ever considered pluging in one project all of your personal cameras data?
 
-That's what supervision is about: having a shedulers manager to collect all your private data.
+That's what supervision is about: having a shedulers manager to collect all your private data from your IP cameras.
 Focus is put on the simplicity of use and pure REST API.
 
 Requirements
@@ -17,7 +16,6 @@ Requirements
 * celery 3.1
 * Flask 0.10
 * PIL 2.6
-* records 0.4
 * requests 2.4
 
 Installation

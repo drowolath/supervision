@@ -5,41 +5,16 @@
 Celery apps definitions
 """
 
-from __future__ import absolute_import
+import supervision
 from celery import Celery
 from celery.schedules import crontab
 from ConfigParser import ConfigParser
 from datetime import timedelta
-from supervision import CAMERAS
 
 
 __all__ = [
-    'gpsparser',
     'cameras'
     ]
-
-gpsparser = Celery(
-    'supervision',
-    broker='amqp://',
-    backend='amqp://',
-    # TODO: broker and backend URIs in conf
-    include=['supervision.tasks']
-    )
-
-gpsparser.conf.update(
-    CELERY_AMQP_TASK_RESULT_EXPIRES=10,
-    CELERY_TASK_RESULT_EXPIRES=10,
-    CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml'],
-    CELERY_TIMEZONE = 'Indian/Antananarivo',
-    CELERY_ENABLE_UTC = True,
-    CELERY_ROUTES = {
-        'supervision.tasks.parse_and_store': {'queue': 'parse_and_store'},
-        'supervision.tasks.parse': {'queue': 'parse'},
-        'supervision.tasks.store': {'queue': 'record'},
-        'supervision.tasks.dmap': {'queue': 'record'},
-        }
-    # map tasks to queues: which queue will hold one task process
-    )
 
 cameras = Celery(
     'supervision',
@@ -57,12 +32,12 @@ cameras.conf.update(
         'download-every-2-seconds': {
             'task': 'supervision.tasks.download',
             'schedule': timedelta(seconds=2),
-            'args': (CAMERAS,),
+            'args': (supervision.CAMERAS,),
         },
         'purge-every-60-seconds': {
             'task': 'supervision.tasks.purge',
             'schedule': crontab(),
-            'args': (CAMERAS,),
+            'args': (supervision.CAMERAS,),
         }
     },
     CELERY_ROUTES = {

@@ -5,14 +5,14 @@
 Some core classes and routines
 """
 
-from __future__ import absolute_import
 import os
 import requests
 import time
+from supervision import CONFIG, CAMERAS
 from ConfigParser import ConfigParser
 from PIL import Image
 from StringIO import StringIO
-from supervision import CONFIG, CAMERAS
+
 
 __all__ = [
     'Camera',
@@ -61,18 +61,18 @@ class Camera(object):
                     'JPEG'
                     )
             try:
-                os.remove(os.path.join(self.snapshots_folder 'latest'))
-                os.remove(os.path.join(self.snapshots_folder 'latest_orig'))
+                os.remove(os.path.join(self.snapshots_folder, 'latest'))
+                os.remove(os.path.join(self.snapshots_folder, 'latest_orig'))
             except OSError:
                 pass
             finally:
                 os.symlink(
-                    os.path.join(self.snapshots_folder resized_image_name),
-                    os.path.join(self.snapshots_folder 'latest')
+                    os.path.join(self.snapshots_folder, resized_image_name),
+                    os.path.join(self.snapshots_folder, 'latest')
                     )
                 os.symlink(
-                    os.path.join(self.snapshots_folder original_image_name),
-                    os.path.join(self.snapshots_folder 'latest_orig')
+                    os.path.join(self.snapshots_folder, original_image_name),
+                    os.path.join(self.snapshots_folder, 'latest_orig')
                     )
             return True
 

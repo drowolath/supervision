@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 #encoding: utf-8
 
-
+import apps
 import importlib
 import os
 import re
 import sys
-from celery import *
-from core import *
 
 __version__ = '0.1'
 
