@@ -1,0 +1,10 @@
+setup.py
+supervision/__init__.py
+supervision/apps.py
+supervision/lib.py
+supervision/tasks.py
+supervision.egg-info/PKG-INFO
+supervision.egg-info/SOURCES.txt
+supervision.egg-info/dependency_links.txt
+supervision.egg-info/requires.txt
+supervision.egg-info/top_level.txt

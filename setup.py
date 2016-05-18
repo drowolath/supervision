@@ -26,12 +26,3 @@ setup(
     include_package_data=True,
     url='http://github.com/drowolath/supervision.git',
 )
-
-try:
-    os.mkdir('/etc/supervision')
-except OSError:
-    pass
-finally:
-    config = ConfigParser(allow_no_value=True)
-    with open('/etc/supervision/supervision.ini', 'w') as f:
-        config.write(f)
