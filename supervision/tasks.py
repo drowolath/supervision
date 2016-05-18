@@ -5,24 +5,29 @@
 Defining tasks
 """
 
-
-import importlib
+import apps
 import os
-import records
-from supervision import CONFIG
-from apps import cameras
 from celery import chain, group, subtask
 from ConfigParser import ConfigParser
 from lib import Camera, Snapshot
 
 
-@cameras.task(name='supervision.tasks.get_image')
+CONFIG = ConfigParser(allow_no_value=True)
+CONFIG.read('/etc/supervision/supervision.ini')
+CAMERAS = []
+sections_cameras = filter(lambda x: x.startswith('camera_'),
+                          CONFIG.sections())
+for section in sections_cameras:
+    CAMERAS.append(dict(CONFIG.items(section)))
+    
+
+@apps.cameras.task(name='supervision.tasks.get_image')
 def get_image(camera_name, **kwargs):
     """given a camera name, snap a shot"""
     camera = Camera(camera_name)
     return camera.snap(**kwargs)
         
-@cameras.task(name='supervision.tasks.download')
+@apps.cameras.task(name='supervision.tasks.download')
 def download(cameras):
     """given a list of cameras, get instant snapshot for each"""
     for camera in cameras:
@@ -32,12 +37,12 @@ def download(cameras):
             pwd=camera['password']
             )
         
-@cameras.task(name='supervision.tasks.rm')
+@apps.cameras.task(name='supervision.tasks.rm')
 def rm(filepath):
     """delete a snapshot given its filepath"""
     return Snapshot.remove(filepath)
 
-@cameras.task(name='supervision.tasks.purge_folder')
+@apps.cameras.task(name='supervision.tasks.purge_folder')
 def purge_folder(camera_name):
     """purging obsolete snapshots of a camera"""
     path = CONFIG.get('camera_{0}'.format(camera_name), 'snapshots_folder')
@@ -77,9 +82,10 @@ def purge_folder(camera_name):
                     )()
                 return res
 
-@cameras.task(name='supervision.tasks.purge')
+@apps.cameras.task(name='supervision.tasks.purge')
 def purge(cameras):
     """given a list of cameras, purge their folders"""
     for camera in cameras:
         purge_folder.delay(camera['name'])
     return True
+#EOF

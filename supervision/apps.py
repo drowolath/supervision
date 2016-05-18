@@ -5,7 +5,7 @@
 Celery apps definitions
 """
 
-import supervision
+
 from celery import Celery
 from celery.schedules import crontab
 from ConfigParser import ConfigParser
@@ -15,6 +15,15 @@ from datetime import timedelta
 __all__ = [
     'cameras'
     ]
+
+CONFIG = ConfigParser(allow_no_value=True)
+CONFIG.read('/etc/supervision/supervision.ini')
+CAMERAS = []
+sections_cameras = filter(lambda x: x.startswith('camera_'),
+                          CONFIG.sections())
+for section in sections_cameras:
+    CAMERAS.append(dict(CONFIG.items(section)))
+
 
 cameras = Celery(
     'supervision',
@@ -32,12 +41,12 @@ cameras.conf.update(
         'download-every-2-seconds': {
             'task': 'supervision.tasks.download',
             'schedule': timedelta(seconds=2),
-            'args': (supervision.CAMERAS,),
+            'args': (CAMERAS,),
         },
         'purge-every-60-seconds': {
             'task': 'supervision.tasks.purge',
             'schedule': crontab(),
-            'args': (supervision.CAMERAS,),
+            'args': (CAMERAS,),
         }
     },
     CELERY_ROUTES = {
